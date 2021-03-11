@@ -5,7 +5,7 @@ class BasicModel(torch.nn.Module):
     """
     This is a basic backbone for SSD.
     The feature extractor outputs a list of 6 feature maps, with the sizes:
-    [shape(-1, output_channels[0], 38, 38),
+    [shape(-1, output_channels[0], 38, 38),                                  -> (?, nr. of output filters, resolution)
      shape(-1, output_channels[1], 19, 19),
      shape(-1, output_channels[2], 10, 10),
      shape(-1, output_channels[3], 5, 5),
@@ -19,6 +19,56 @@ class BasicModel(torch.nn.Module):
         self.output_channels = output_channels
         image_channels = cfg.MODEL.BACKBONE.INPUT_CHANNELS
         self.output_feature_shape = cfg.MODEL.PRIORS.FEATURE_MAPS
+
+        # Define layers of CNN (Task 4a)
+
+        # ----- Layer 1 -----
+        self.conv_layer1 = nn.Sequential(
+            nn.Conv2d(in_channels=image_channels, out_channels=num_filters, kernel_size=3, stride=1, padding=1),   
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            ReLU(),
+            nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=64, out_channels=output_channels[0], kernel_size=3, stride=2, padding=1)
+        )
+        # ----- Layer 2 -----
+        self.conv_layer2 = nn.Sequential(
+            nn.ReLU(),
+            nn.Conv2d(in_channels=output_channels[0], out_channels=128, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=128, out_channels=output_channels[1], kernel_size=3, stride=2, padding=1)
+        )
+        # ----- Layer 3 -----
+        self.conv_layer3 = nn.Sequential(
+            nn.ReLU(),
+            nn.Conv2d(in_channels=output_channels[1], out_channels=256, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=256, out_channels=output_channels[2], kernel_size=3, stride=2, padding=1)
+        )
+        # ----- Layer 4 -----
+        self.conv_layer4 = nn.Sequential(
+            nn.ReLU(),
+            nn.Conv2d(in_channels=output_channels[2], out_channels=128, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=128, out_channels=output_channels[3], kernel_size=3, stride=2, padding=1)
+        )
+        # ----- Layer 5 -----
+        self.conv_layer5 = nn.Sequential(
+            nn.ReLU(),
+            nn.Conv2d(in_channels=output_channels[3], out_channels=128, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=128, out_channels=output_channels[4], kernel_size=3, stride=2, padding=1)
+        )
+        # ----- Last layer -----
+        self.conv_layer6 = nn.Sequential(
+            nn.ReLU(),
+            nn.Conv2d(in_channels=output_channels[4], out_channels=128, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=128, out_channels=output_channels[5], kernel_size=3, stride=1, padding=0)
+        )
 
     def forward(self, x):
         """
