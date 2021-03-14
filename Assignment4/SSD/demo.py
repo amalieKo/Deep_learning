@@ -9,7 +9,7 @@ import argparse
 import numpy as np
 from ssd import torch_utils
 from ssd.data.transforms import build_transforms
-from ssd.modeling.detector import SSDDetector
+from ssd.modeling.detector import SSDDetector 
 from ssd.utils.checkpoint import CheckPointer
 
 
@@ -22,14 +22,14 @@ def run_demo(cfg, ckpt, score_threshold, images_dir: pathlib.Path, output_dir: p
         class_names = TDT4265Dataset.class_names
     else:
         raise NotImplementedError('Not implemented now.')
-
+    
     model = SSDDetector(cfg)
     model = torch_utils.to_cuda(model)
     checkpointer = CheckPointer(model, save_dir=cfg.OUTPUT_DIR)
     checkpointer.load(ckpt, use_latest=ckpt is None)
     weight_file = ckpt if ckpt else checkpointer.get_checkpoint_file()
     print('Loaded weights from {}'.format(weight_file))
-
+    
     image_paths = list(images_dir.glob("*.png")) + list(images_dir.glob("*.jpg"))
 
     output_dir.mkdir(exist_ok=True, parents=True)

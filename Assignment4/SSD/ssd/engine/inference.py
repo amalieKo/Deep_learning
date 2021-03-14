@@ -7,7 +7,6 @@ from ssd.data.build import make_data_loader
 from ssd.data.datasets.evaluation import evaluate
 from ssd import torch_utils
 
-
 def convert_predictions(predictions):
     # convert a dict where the key is the index in a list
     image_ids = list(sorted(predictions.keys()))

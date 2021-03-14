@@ -9,7 +9,6 @@ from ssd.engine.inference import do_evaluation
 from ssd.utils.metric_logger import MetricLogger
 from ssd import torch_utils
 
-
 def write_metric(eval_result, prefix, summary_writer, global_step):
     for key in eval_result:
         value = eval_result[key]
